@@ -101,6 +101,21 @@ def unprocessable(error):
                     }), 404
 
 '''
+@app.errorhandler(400)
+def bad_request(error):
+    return jsonify({
+        "success": False,
+        "error": 400,
+        "message": "bad request"
+    }), 400
+
+@app.errorhandler(500)
+def internal_server_error(error):
+    return jsonify({
+        "success": False,
+        "error": 500,
+        "message": "internal server error"
+    }), 500
 
 '''
 @DONE implement error handler for 404
@@ -115,10 +130,10 @@ def not_found(error):
     }), 404
 
 '''
-@TODO implement error handler for AuthError
+@TODO? implement error handler for AuthError
     error handler should conform to general task above
 '''
-@app.errorhandler(AuthError):
+@app.errorhandler(AuthError)
 def forbidden(error):
     return jsonify({
         "success": False,
