@@ -21,14 +21,6 @@ class AuthError(Exception):
 
 ## Auth Header
 
-'''
-@DONE? implement get_token_auth_header() method
-    X it should attempt to get the header from the request
-        it should raise an AuthError if no header is present
-    X it should attempt to split bearer and the token
-        it should raise an AuthError if the header is malformed
-    X return the token part of the header
-'''
 def get_token_auth_header(token):
     ''' Retrieve access token from authorization header. '''
     if "Authorization" not in request.headers:
@@ -53,12 +45,8 @@ def get_token_auth_header(token):
 
     return header_parts[1]
 
-
-'''
-@DONE implement check_permissions(permission, payload) method
-'''
 def check_permissions(permission, payload):
-    ''' Check permissions. '''
+    ''' Check user permissions. '''
     if 'permissions' not in payload:
         raise AuthError({
                 'code': 'invalid_claims',
@@ -74,8 +62,7 @@ def check_permissions(permission, payload):
     return True
 
 '''
-@DONE implement verify_decode_jwt(token) method
-    !!NOTE urlopen has a common certificate error described here: https://stackoverflow.com/questions/50236117/scraping-ssl-certificate-verify-failed-error-for-http-en-wikipedia-org
+!!NOTE urlopen has a common certificate error described here: https://stackoverflow.com/questions/50236117/scraping-ssl-certificate-verify-failed-error-for-http-en-wikipedia-org
 '''
 def verify_decode_jwt(token):
     ''' Method to decode jwt token. '''
@@ -139,9 +126,6 @@ def verify_decode_jwt(token):
                 'description': 'Unable to find the appropriate key.'
             }, 400)
 
-'''
-@DONE implement @requires_auth(permission) decorator method
-'''
 def requires_auth(permission=''):
     ''' Decorator to require authorization. '''
     def requires_auth_decorator(f):
