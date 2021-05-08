@@ -109,13 +109,21 @@ def bad_request(error):
         "message": "bad request"
     }), 400
 
+@app.errorhandler(403)
+def forbidden(error):
+    return jsonify({
+        "success": False,
+        "error": 403,
+        "message": "forbidden"
+    }), 403
+
 @app.errorhandler(500)
 def internal_server_error(error):
     return jsonify({
         "success": False,
         "error": 500,
         "message": "internal server error"
-    }), 500
+    }),  500
 
 '''
 @DONE implement error handler for 404
@@ -134,9 +142,9 @@ def not_found(error):
     error handler should conform to general task above
 '''
 @app.errorhandler(AuthError)
-def forbidden(error):
+def authentication_failed(error):
     return jsonify({
         "success": False,
-        "error": 403,
-        "message": "forbidden"
-    }), 403
+        "error": error.status_code,
+        "message": error.error['code']
+    }), error.status_code
