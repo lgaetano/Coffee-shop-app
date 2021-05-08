@@ -4,11 +4,6 @@ from functools import wraps
 from jose import jwt
 from urllib.request import urlopen
 
-
-# AUTH0_DOMAIN = 'udacity-fsnd.auth0.com'
-# ALGORITHMS = ['RS256']
-# API_AUDIENCE = 'dev'
-
 AUTH0_DOMAIN = 'lgaetano.us.auth0.com'
 ALGORITHMS = ['RS256']
 API_AUDIENCE = 'drinks'
@@ -35,39 +30,48 @@ class AuthError(Exception):
     X return the token part of the header
 '''
 def get_token_auth_header(token):
-    ''' Retrieve token from request header. '''
+    ''' Retrieve access token from authorization header. '''
     if "Authorization" not in request.headers:
-        abort(401)
+        raise AuthError({
+                'code': 'authorization_header_missing',
+                'description': 'Unable to parse authentication token.'
+            }, 401)
 
     auth_header = request.headers['Authorization']
     header_parts = auth_header.split(" ")
 
     if len(header_parts) != 2:
-        abort(401)
+        raise AuthError({
+                'code': 'invalid_header',
+                'description': 'Unable to parse authentication token.'
+            }, 401)
     elif header_parts[0].lower() != "bearer":
-        abort(401)
+        raise AuthError({
+                'code': 'invalid_header',
+                'description': 'Authorization header must be a bearer token.'
+            }, 401)
 
     return header_parts[1]
 
 
 '''
-@TODO implement check_permissions(permission, payload) method
-    @INPUTS
-        permission: string permission (i.e. 'post:drink')
-        payload: decoded jwt payload
-
-    it should raise an AuthError if permissions are not included in the payload
-        !!NOTE check your RBAC settings in Auth0
-    it should raise an AuthError if the requested permission string is not in the payload permissions array
-    return true otherwise
+@DONE implement check_permissions(permission, payload) method
 '''
 def check_permissions(permission, payload):
-    ''' '''
-    if(permission in payload):
-    # if(permission in user.permissions)
-        return "Success"
-    else:
-        return AuthError(403, status_code)
+    ''' Check permissions. '''
+    if 'permissions' not in payload:
+        raise AuthError({
+                'code': 'invalid_claims',
+                'description': 'Permission not included in JWT.'
+            }, 400)
+            
+    if permission not in payload['permissions']:
+        raise AuthError({
+                'code': 'unauthorized',
+                'description': 'Permission not found.'
+            }, 403)
+    
+    return True
 
 '''
 @DONE implement verify_decode_jwt(token) method
