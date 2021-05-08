@@ -8,6 +8,7 @@ from urllib.request import urlopen
 # AUTH0_DOMAIN = 'udacity-fsnd.auth0.com'
 # ALGORITHMS = ['RS256']
 # API_AUDIENCE = 'dev'
+
 AUTH0_DOMAIN = 'lgaetano.us.auth0.com'
 ALGORITHMS = ['RS256']
 API_AUDIENCE = 'drinks'
@@ -34,7 +35,7 @@ class AuthError(Exception):
     X return the token part of the header
 '''
 def get_token_auth_header(token):
-    ''' Unpack the request header. '''
+    ''' Retrieve token from request header. '''
     if "Authorization" not in request.headers:
         abort(401)
 
@@ -141,20 +142,18 @@ def verify_decode_jwt(token):
 @TODO implement @requires_auth(permission) decorator method
     @INPUTS
         permission: string permission (i.e. 'post:drink')
-
-    it should use the get_token_auth_header method to get the token
-    it should use the verify_decode_jwt method to decode the jwt
-    it should use the check_permissions method validate claims and check the requested permission
-    return the decorator which passes the decoded payload to the decorated method
 '''
 def requires_auth(permission=''):
+    ''' Decorator to require authorization. '''
     def requires_auth_decorator(f):
         @wraps(f)
         def wrapper(*args, **kwargs):
             token = get_token_auth_header()
-            payload = verify_decode_jwt(token)
+            try:
+                payload = verify_decode_jwt(token)
+            except:
+                abort(401)
             check_permissions(permission, payload)
             return f(payload, *args, **kwargs)
-
         return wrapper
     return requires_auth_decorator
