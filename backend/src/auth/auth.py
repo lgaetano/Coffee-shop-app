@@ -20,9 +20,11 @@ class AuthError(Exception):
 
 
 ## Auth Header
-
+# Source: https://github.com/udacity/FSND/blob/master/BasicFlaskAuth/app.py
 def get_token_auth_header(token):
     ''' Retrieve access token from authorization header. '''
+    
+    # Check if authorization header exists
     if "Authorization" not in request.headers:
         raise AuthError({
                 'code': 'authorization_header_missing',
@@ -37,6 +39,7 @@ def get_token_auth_header(token):
                 'code': 'invalid_header',
                 'description': 'Unable to parse authentication token.'
             }, 401)
+    # Confirm "bearer" token
     elif header_parts[0].lower() != "bearer":
         raise AuthError({
                 'code': 'invalid_header',
@@ -45,14 +48,17 @@ def get_token_auth_header(token):
 
     return header_parts[1]
 
+# Source: https://github.com/udacity/FSND/blob/master/BasicFlaskAuth/app.py
 def check_permissions(permission, payload):
     ''' Check user permissions. '''
+    # Check for permissions array in JWT
     if 'permissions' not in payload:
         raise AuthError({
                 'code': 'invalid_claims',
                 'description': 'Permission not included in JWT.'
             }, 400)
-            
+
+    # Check if user has permission 
     if permission not in payload['permissions']:
         raise AuthError({
                 'code': 'unauthorized',
@@ -64,6 +70,7 @@ def check_permissions(permission, payload):
 '''
 !!NOTE urlopen has a common certificate error described here: https://stackoverflow.com/questions/50236117/scraping-ssl-certificate-verify-failed-error-for-http-en-wikipedia-org
 '''
+# Source: https://github.com/udacity/FSND/blob/master/BasicFlaskAuth/app.py
 def verify_decode_jwt(token):
     ''' Method to decode jwt token. '''
     # Get public key from AUTH0
@@ -126,6 +133,7 @@ def verify_decode_jwt(token):
                 'description': 'Unable to find the appropriate key.'
             }, 400)
 
+# Source: https://github.com/udacity/FSND/blob/master/BasicFlaskAuth/app.py
 def requires_auth(permission=''):
     ''' Decorator to require authorization. '''
     def requires_auth_decorator(f):
