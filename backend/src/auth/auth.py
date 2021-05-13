@@ -1,5 +1,5 @@
 import json
-from flask import request, _request_ctx_stack
+from flask import request, _request_ctx_stack, abort
 from functools import wraps
 from jose import jwt
 from urllib.request import urlopen
@@ -21,7 +21,7 @@ class AuthError(Exception):
 
 ## Auth Header
 # Source: https://github.com/udacity/FSND/blob/master/BasicFlaskAuth/app.py
-def get_token_auth_header(token):
+def get_token_auth_header():
     ''' Retrieve access token from authorization header. '''
     
     # Check if authorization header exists
