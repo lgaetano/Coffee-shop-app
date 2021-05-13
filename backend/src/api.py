@@ -26,7 +26,7 @@ CORS(app)
 @app.route('/drinks', methods=['GET'])
 def get_drinks():
     ''' Retrieve drinks for homepage. '''
-    drinks = [drinks.short() for drink \
+    drinks = [drink.short() for drink \
         in Drink.query.all()]
 
     return jsonify({
@@ -54,9 +54,9 @@ def get_drinks_detail(payload):
 '''
 @TODO implement endpoint
     POST /drinks
-        it should create a new row in the drinks table
+        X it should create a new row in the drinks table
         X it should require the 'post:drinks' permission
-        it should contain the drink.long() data representation
+        X it should contain the drink.long() data representation
     returns status code 200 and json {"success": True, "drinks": drink} where drink an array containing only the newly created drink
         or appropriate status code indicating reason for failure
 '''
@@ -102,7 +102,7 @@ def create_drink(payload):
 #     # Get drink with requested id
 #     drink = Drink.query.filter(Drink.id == id).one_or_none()
 
-#     # If no drink, abort
+#     # If no drink with id, abort
 #     if not drink:
 #         abort(404)
 
@@ -133,6 +133,27 @@ def create_drink(payload):
         or appropriate status code indicating reason for failure
 '''
 
+@app.route('/drinks/<int>:id', methods='DELETE')
+@requires_auth('delete:drinks')
+def delete_drink(payload):
+    ''' Delete existing drink. '''
+
+    # Get drink with requested id
+    drink = Drink.query.filter(Drink.id == id).one_or_none()
+    
+    # # If no drink with id, abort
+    if not drink:
+        abort(404)
+    try:
+        # Delete drink
+        drink.delete()
+    except Exception as e:
+        abort(400)
+
+    return jsonify({
+        "success": True,
+        "delete": id 
+    }), 200
 
 # Error Handling
 
