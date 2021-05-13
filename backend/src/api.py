@@ -52,13 +52,7 @@ def get_drinks_detail(payload):
     }), 200
 
 '''
-@TODO implement endpoint
-    POST /drinks
-        X it should create a new row in the drinks table
-        X it should require the 'post:drinks' permission
-        X it should contain the drink.long() data representation
-    returns status code 200 and json {"success": True, "drinks": drink} where drink an array containing only the newly created drink
-        or appropriate status code indicating reason for failure
+@DONE implement POST /drinks endpoint
 '''
 @app.route('/drinks', methods=['POST'])
 @requires_auth('post:drinks')
@@ -87,50 +81,52 @@ def create_drink(payload):
 '''
 @TODO implement endpoint
     PATCH /drinks/<id>
-        where <id> is the existing model id
-        it should respond with a 404 error if <id> is not found
-        it should update the corresponding row for <id>
-        it should require the 'patch:drinks' permission
+        X where <id> is the existing model id
+        X it should respond with a 404 error if <id> is not found
+        X it should update the corresponding row for <id>
+        X t should require the 'patch:drinks' permission
         it should contain the drink.long() data representation
     returns status code 200 and json {"success": True, "drinks": drink} where drink an array containing only the updated drink
         or appropriate status code indicating reason for failure
 '''
-# @app.route('/drinks/<int:id>', methods=['PATCH'])
-# @requires_auth('patch:drinks')
-# def update_drinks(payload, id):
-#     ''' Update existing drink. '''
-#     # Get drink with requested id
-#     drink = Drink.query.filter(Drink.id == id).one_or_none()
+@app.route('/drinks/<int:id>', methods=['PATCH'])
+@requires_auth('patch:drinks')
+def update_drinks(payload, id):
+    ''' Update existing drink. '''
+    
+    # Get drink with requested id
+    drink = Drink.query.filter(Drink.id == id).one_or_none()
 
-#     # If no drink with id, abort
-#     if not drink:
-#         abort(404)
+    # If no drink with id, abort
+    if not drink:
+        abort(404)
 
-#     # Get data from frontend
-#     data = request.get_json()
-#     try:
-#         #UPDATE
+    # Get data from frontend
+    data = request.get_json()
+    try:
+        title = data.get("title")
+        recipe = json.dumps(data["recipe"])
 
-#         # Update drink
-#         drink.update()
-#     except Exception:
-#         abort(400)
+        # If new title provided, add to obj
+        if title:
+            drink.title = title
+        # If new recipe provided, add to obj
+        if recipe:
+            drink.recipe = recipe
 
-#     return jsonify({
-#         "success": True,
-#         "drinks": [drink.long()]
-#     }), 200
+        # Update drink with new information
+        drink.update()
+    except Exception:
+        abort(400)
+
+    return jsonify({
+        "success": True,
+        "drinks": [drink.long()]
+    }), 200
 
 
 '''
-@TODO implement endpoint
-    DELETE /drinks/<id>
-        where <id> is the existing model id
-        it should respond with a 404 error if <id> is not found
-        it should delete the corresponding row for <id>
-        it should require the 'delete:drinks' permission
-    returns status code 200 and json {"success": True, "delete": id} where id is the id of the deleted record
-        or appropriate status code indicating reason for failure
+@DONE implement DELETE /drinks/<id> endpoint
 '''
 
 @app.route('/drinks/<int>:id', methods='DELETE')
