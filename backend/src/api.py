@@ -75,7 +75,8 @@ def create_drink(payload):
         # Insert new drink
         drink.insert()
 
-    except Exception:
+    except Exception as e:
+        print('ERROR: ', str(e))
         abort(400)
     
     return jsonify({
@@ -94,16 +95,31 @@ def create_drink(payload):
     returns status code 200 and json {"success": True, "drinks": drink} where drink an array containing only the updated drink
         or appropriate status code indicating reason for failure
 '''
-@app.route('/drinks/<int:id>', methods=['POST'])
-@requires_auth('patch:drinks')
-def update_drinks(payload, id):
-    ''' Update existing drink. '''
-    drink = Drink.query.filter(Drink.id == id).one_or_none()
+# @app.route('/drinks/<int:id>', methods=['PATCH'])
+# @requires_auth('patch:drinks')
+# def update_drinks(payload, id):
+#     ''' Update existing drink. '''
+#     # Get drink with requested id
+#     drink = Drink.query.filter(Drink.id == id).one_or_none()
 
-    return jsonify({
-        "success": True,
-        "drinks": [drink.long()]
-    }), 200
+#     # If no drink, abort
+#     if not drink:
+#         abort(404)
+
+#     # Get data from frontend
+#     data = request.get_json()
+#     try:
+#         #UPDATE
+
+#         # Update drink
+#         drink.update()
+#     except Exception:
+#         abort(400)
+
+#     return jsonify({
+#         "success": True,
+#         "drinks": [drink.long()]
+#     }), 200
 
 
 '''
