@@ -113,7 +113,8 @@ def update_drinks(payload, id):
             drink.title = title
         # If new recipe provided, add to obj
         if recipe:
-            drink.recipe = recipe
+            # drink.recipe = recipe
+            drink.recipe = recipe if type(recipe) == str else json.dumps(recipe)
 
         # Update drink with new information
         drink.update()
