@@ -61,11 +61,20 @@ def create_drink(payload):
     
     # Get data from body
     data = request.get_json()
+
+    title = data.get("title", None)
+    recipe = json.dumps(data["recipe"])
+
+    # If no drink title supplied, abort
+    if not title:
+        abort(422)
+    # If no drink recipe supplied, abort
+    if not recipe:
+        abort(422)
+
     try:
         # Create a new drink
-        drink = Drink()
-        drink.title = data['title']
-        drink.recipe = json.dumps(data['recipe'])
+        drink = Drink(title=title, recipe=recipe)
         # Insert new drink
         drink.insert()
 
@@ -79,15 +88,7 @@ def create_drink(payload):
     }), 200
 
 '''
-@TODO implement endpoint
-    PATCH /drinks/<id>
-        X where <id> is the existing model id
-        X it should respond with a 404 error if <id> is not found
-        X it should update the corresponding row for <id>
-        X t should require the 'patch:drinks' permission
-        it should contain the drink.long() data representation
-    returns status code 200 and json {"success": True, "drinks": drink} where drink an array containing only the updated drink
-        or appropriate status code indicating reason for failure
+@DONE implement  PATCH /drinks/<id> endpoint
 '''
 @app.route('/drinks/<int:id>', methods=['PATCH'])
 @requires_auth('patch:drinks')
@@ -128,10 +129,9 @@ def update_drinks(payload, id):
 '''
 @DONE implement DELETE /drinks/<id> endpoint
 '''
-
-@app.route('/drinks/<int>:id', methods='DELETE')
+@app.route('/drinks/<int:id>', methods=['DELETE'])
 @requires_auth('delete:drinks')
-def delete_drink(payload):
+def delete_drink(payload, id):
     ''' Delete existing drink. '''
 
     # Get drink with requested id
