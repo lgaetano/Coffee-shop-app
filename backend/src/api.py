@@ -15,14 +15,12 @@ CORS(app)
 @DONE uncomment the following line to initialize the datbase
 !! NOTE THIS WILL DROP ALL RECORDS AND START YOUR DB FROM SCRATCH
 !! NOTE THIS MUST BE UNCOMMENTED ON FIRST RUN
-!! Running this funciton will add one
+!! Running this function will add new db
 '''
 # db_drop_and_create_all()
 
 # ROUTES
-'''
-@DONE: implement GET /drinks endpoint
-'''
+
 @app.route('/drinks', methods=['GET'])
 def get_drinks():
     ''' Retrieve drinks for homepage. '''
@@ -34,10 +32,6 @@ def get_drinks():
         "drinks": drinks
     }), 200
 
-
-'''
-@DONE implement GET /drinks-detail endpoint
-'''
 @app.route('/drinks-detail', methods=['GET'])
 @requires_auth('get:drinks-detail')
 def get_drinks_detail(payload):
@@ -51,9 +45,6 @@ def get_drinks_detail(payload):
         "drinks": drinks
     }), 200
 
-'''
-@DONE implement POST /drinks endpoint
-'''
 @app.route('/drinks', methods=['POST'])
 @requires_auth('post:drinks')
 def create_drink(payload):
@@ -87,9 +78,6 @@ def create_drink(payload):
         "drinks": [drink.long()]
     }), 200
 
-'''
-@DONE implement  PATCH /drinks/<id> endpoint
-'''
 @app.route('/drinks/<int:id>', methods=['PATCH'])
 @requires_auth('patch:drinks')
 def update_drinks(payload, id):
@@ -126,10 +114,6 @@ def update_drinks(payload, id):
         "drinks": [drink.long()]
     }), 200
 
-
-'''
-@DONE implement DELETE /drinks/<id> endpoint
-'''
 @app.route('/drinks/<int:id>', methods=['DELETE'])
 @requires_auth('delete:drinks')
 def delete_drink(payload, id):
